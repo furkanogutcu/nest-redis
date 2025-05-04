@@ -9,6 +9,7 @@ export class RedisModule {
   static register(options: RedisModuleOptions): DynamicModule {
     return {
       module: RedisModule,
+      global: options.isGlobal || false,
       providers: [
         {
           provide: REDIS_CONNECTION_OPTIONS,
@@ -23,6 +24,7 @@ export class RedisModule {
   static registerAsync(options: RedisModuleAsyncOptions): DynamicModule {
     return {
       module: RedisModule,
+      global: options.isGlobal || false,
       imports: options.imports || [],
       providers: [...this.createAsyncProviders(options), RedisService],
       exports: [RedisService],

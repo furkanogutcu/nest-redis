@@ -52,6 +52,41 @@ import { AppService } from './app.service';
           // Optional ioredis configuration
         },
       },
+      // Optional: Make the module global
+      // isGlobal: true,
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+### Async Configuration
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule } from '@furkanogutcu/nest-redis';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    RedisModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          url: configService.get('REDIS_URL'),
+          config: {
+            // Optional ioredis configuration
+          },
+        },
+      }),
+      // Optional: Make the module global
+      // isGlobal: true,
     }),
   ],
   controllers: [AppController],
@@ -82,37 +117,6 @@ export class AppService {
     return client.get(key);
   }
 }
-```
-
-### Async Configuration
-
-```typescript
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RedisModule } from '@furkanogutcu/nest-redis';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-
-@Module({
-  imports: [
-    ConfigModule.forRoot(),
-    RedisModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        connection: {
-          url: configService.get('REDIS_URL'),
-          config: {
-            // Optional ioredis configuration
-          },
-        },
-      }),
-    }),
-  ],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {}
 ```
 
 ## Development
