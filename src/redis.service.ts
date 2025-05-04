@@ -1,8 +1,8 @@
 import { Inject, Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
-import { REDIS_CONNECTION_OPTIONS } from './constants/redis.constants';
-import { RedisConnectionOptions } from './interfaces/redis.interfaces';
+import { REDIS_CONNECTION_OPTIONS } from './constants/redis.constant';
+import { RedisConnectionOptions } from './interfaces/redis.interface';
 
 @Injectable()
 export class RedisService implements OnApplicationShutdown {
