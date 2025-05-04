@@ -1,6 +1,6 @@
 {
   "name": "@furkanogutcu/nest-redis",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Redis connection and client management module for NestJS applications.",
   "author": "Furkan Ogutcu",
   "license": "MIT",
