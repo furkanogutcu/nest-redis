@@ -3,7 +3,7 @@
 [![npm version](https://img.shields.io/npm/v/@furkanogutcu/nest-redis.svg)](https://www.npmjs.com/package/@furkanogutcu/nest-redis)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus eu diam elit.
+A Redis connection and client management module for NestJS applications. This package provides an easy way to integrate Redis with your NestJS application.
 
 ## Contents
 
@@ -27,15 +27,92 @@ yarn add @furkanogutcu/nest-redis
 
 ## Features
 
-- Lorem
-- Ipsum
+- Simple Redis client integration for NestJS applications
+- Support for both synchronous and asynchronous configuration
+- Automatic connection management (including graceful shutdown)
+- Minimal setup required with full access to Redis functionality
+- Built on top of the widely-used `ioredis` package
 
 ## Usage
 
 ### Basic Example
 
 ```typescript
-import { YourModule } from '@furkanogutcu/nest-redis';
+import { Module } from '@nestjs/common';
+import { RedisModule } from '@furkanogutcu/nest-redis';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+@Module({
+  imports: [
+    RedisModule.register({
+      connection: {
+        url: 'redis://localhost:6379',
+        config: {
+          // Optional ioredis configuration
+        },
+      },
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
+```
+
+### Using the Redis service
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { RedisService } from '@furkanogutcu/nest-redis';
+
+@Injectable()
+export class AppService {
+  constructor(private readonly redisService: RedisService) {}
+
+  async setValue(key: string, value: string): Promise<string> {
+    const client = this.redisService.getClient();
+
+    return client.set(key, value);
+  }
+
+  async getValue(key: string): Promise<string> {
+    const client = this.redisService.getClient();
+
+    return client.get(key);
+  }
+}
+```
+
+### Async Configuration
+
+```typescript
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule } from '@furkanogutcu/nest-redis';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+    RedisModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        connection: {
+          url: configService.get('REDIS_URL'),
+          config: {
+            // Optional ioredis configuration
+          },
+        },
+      }),
+    }),
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
 ```
 
 ## Development
